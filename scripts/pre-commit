@@ -1,0 +1,80 @@
+#!/bin/bash
+# ─────────────────────────────────────────────────────────
+# AI-SPM Git Pre-Commit Hook
+# ─────────────────────────────────────────────────────────
+# Checks all staged files through the AI-SPM File Sentinel
+# before allowing a commit. Blocks commits that modify
+# sensitive files (credentials, .env, CI configs, etc).
+#
+# Installation:
+#   cp scripts/pre-commit .git/hooks/pre-commit
+#   chmod +x .git/hooks/pre-commit
+#
+# Or with symlink:
+#   ln -sf ../../scripts/pre-commit .git/hooks/pre-commit
+#
+# Configuration:
+#   AI_SPM_URL   - AI-SPM server URL (default: http://127.0.0.1:8080)
+#   AI_SPM_AGENT - Agent ID (default: git-pre-commit-hook)
+# ─────────────────────────────────────────────────────────
+
+AI_SPM_URL="${AI_SPM_URL:-http://127.0.0.1:8080}"
+AI_SPM_AGENT="${AI_SPM_AGENT:-git-pre-commit-hook}"
+
+# Check if AI-SPM server is running
+if ! curl -s --max-time 2 "${AI_SPM_URL}/health" > /dev/null 2>&1; then
+    echo "⚠️  AI-SPM server not reachable at ${AI_SPM_URL}"
+    echo "   Skipping file sentinel checks."
+    exit 0
+fi
+
+echo "🔍 AI-SPM Pre-Commit: Checking staged files..."
+echo ""
+
+BLOCKED=0
+FLAGGED_FILES=""
+
+# Get all staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR)
+
+if [ -z "$STAGED_FILES" ]; then
+    exit 0
+fi
+
+for file in $STAGED_FILES; do
+    RESULT=$(curl -s --max-time 2 -X POST "${AI_SPM_URL}/api/fs/check" \
+        -H "Content-Type: application/json" \
+        -d "{\"path\":\"${file}\", \"operation\":\"write\", \"agent_id\":\"${AI_SPM_AGENT}\"}" 2>/dev/null)
+
+    if [ -z "$RESULT" ]; then
+        continue
+    fi
+
+    ALLOWED=$(echo "$RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['allowed'])" 2>/dev/null || echo "True")
+    SENSITIVITY=$(echo "$RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['sensitivity'])" 2>/dev/null || echo "normal")
+    REASON=$(echo "$RESULT" | python3 -c "import sys,json; r=json.load(sys.stdin)['data'].get('reason',''); print(r if r else '')" 2>/dev/null || echo "")
+
+    if [ "$ALLOWED" = "False" ]; then
+        echo "  🚫 BLOCKED: $file"
+        echo "     Sensitivity: $SENSITIVITY"
+        [ -n "$REASON" ] && echo "     Reason: $REASON"
+        echo ""
+        BLOCKED=$((BLOCKED + 1))
+        FLAGGED_FILES="$FLAGGED_FILES $file"
+    elif [ "$SENSITIVITY" != "normal" ]; then
+        echo "  ⚠️  SENSITIVE: $file ($SENSITIVITY)"
+    fi
+done
+
+if [ $BLOCKED -gt 0 ]; then
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "🚫 Commit BLOCKED! $BLOCKED sensitive file(s) detected:"
+    echo "  $FLAGGED_FILES"
+    echo ""
+    echo "   To bypass: git commit --no-verify"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    exit 1
+fi
+
+echo "✅ All files passed AI-SPM File Sentinel check."
+exit 0

@@ -1,0 +1,76 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/ai-spm-core",
+    "crates/ai-spm-identity",
+    "crates/ai-spm-gateway",
+    "crates/ai-spm-reasoning",
+    "crates/ai-spm-audit",
+    "crates/ai-spm-redteam",
+    "crates/ai-spm-server",
+    "crates/ai-spm-monitor",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Ajay Singh"]
+
+[workspace.dependencies]
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Error handling
+thiserror = "2"
+anyhow = "1"
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+
+# HTTP
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+axum = { version = "0.7", features = ["ws"] }
+tower = { version = "0.5", features = ["full"] }
+tower-http = { version = "0.6", features = ["cors", "trace", "fs"] }
+
+# Time & IDs
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1", features = ["v4", "serde"] }
+
+# Cryptography
+ring = "0.17"
+ed25519-dalek = { version = "2", features = ["serde", "rand_core"] }
+x509-cert = "0.2"
+jsonwebtoken = "9"
+hmac = "0.12"
+sha2 = "0.10"
+hex = "0.4"
+rand = "0.8"
+base64 = "0.22"
+
+# Database
+rusqlite = { version = "0.31", features = ["bundled"] }
+
+# Configuration
+config = "0.14"
+
+# Logging & Tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# CLI
+clap = { version = "4", features = ["derive"] }
+
+# JSON Schema validation
+jsonschema = "0.27"
+
+# Internal crates
+ai-spm-core = { path = "crates/ai-spm-core" }
+ai-spm-identity = { path = "crates/ai-spm-identity" }
+ai-spm-gateway = { path = "crates/ai-spm-gateway" }
+ai-spm-reasoning = { path = "crates/ai-spm-reasoning" }
+ai-spm-audit = { path = "crates/ai-spm-audit" }
+ai-spm-redteam = { path = "crates/ai-spm-redteam" }
+ai-spm-server = { path = "crates/ai-spm-server" }

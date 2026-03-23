@@ -1,0 +1,19 @@
+[package]
+name = "ai-spm-reasoning"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Reasoning Integrity Layer: FIDES taint tracking, HIDE function, LLM inspector"
+
+[dependencies]
+ai-spm-core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+chrono = { workspace = true }
+uuid = { workspace = true }
+tracing = { workspace = true }
+tokio = { workspace = true }
+reqwest = { workspace = true }

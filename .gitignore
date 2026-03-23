@@ -1,0 +1,38 @@
+# Rust
+target/
+**/*.rs.bk
+
+# Logs
+*.log
+monitor.log
+server.log
+
+# Application Data & Databases
+data/*.db
+data/*.db-shm
+data/*.db-wal
+data/*.log
+!data/golden_datasets/
+
+# Build artifacts and Distributions
+dist/
+dist/*
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Scratch files
+research.txt
+design.txt
+test_wry.rs
+.screenshots/
+
+# Config overrides
+config/*.local.toml

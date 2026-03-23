@@ -1,0 +1,55 @@
+[package]
+name = "ai-spm-monitor"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "AI-SPM Agent Monitor — macOS menu bar daemon for real-time AI agent auditing"
+
+[[bin]]
+name = "ai-spm-monitor"
+path = "src/main.rs"
+
+[dependencies]
+# Internal crates
+ai-spm-core = { path = "../ai-spm-core" }
+ai-spm-gateway = { path = "../ai-spm-gateway" }
+ai-spm-server = { path = "../ai-spm-server" }
+
+# System tray
+tray-icon = "0.19"
+tao = { version = "0.30", features = ["rwh_06"] }
+
+# File system watching
+notify = { version = "7", features = ["macos_fsevent"] }
+
+# Process monitoring
+sysinfo = "0.32"
+
+# HTTP client (to send events to AI-SPM server)
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+
+# Async runtime
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time"] }
+
+# Serialization
+serde.workspace = true
+serde_json.workspace = true
+
+# Time & IDs
+chrono = { workspace = true }
+uuid = { workspace = true }
+
+# Logging
+tracing.workspace = true
+tracing-subscriber = { workspace = true }
+
+# Lightweight regex for version extraction
+regex-lite = "0.1"
+wry = "0.54.2"
+dirs = "6.0.0"
+
+# macOS dock icon
+[target.'cfg(target_os = "macos")'.dependencies]
+cocoa = "0.26"
+objc = "0.2"

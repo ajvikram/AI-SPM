@@ -1,0 +1,88 @@
+name: Release AI-SPM
+
+on:
+  push:
+    tags:
+      - 'v*' # Trigger on version tags (e.g., v1.0.0)
+  workflow_dispatch: # Allow manual trigger from the Actions tab
+
+jobs:
+  build-mac:
+    name: Build macOS Application
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Build macOS App Bundle
+        run: |
+          chmod +x scripts/build_mac.sh
+          ./scripts/build_mac.sh
+
+      - name: Upload macOS Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI-SPM-macOS
+          path: dist/AI-SPM-macOS-arm64.zip
+
+  build-windows:
+    name: Build Windows Executable
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          target: x86_64-pc-windows-gnu
+
+      - name: Build and Package Windows Executable
+        run: |
+          .\scripts\build_win.ps1
+
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI-SPM-Windows
+          path: dist/windows/
+
+  publish-release:
+    name: Publish GitHub Release
+    needs: [build-mac, build-windows]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download macOS Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: AI-SPM-macOS
+          path: macos-release
+
+      - name: Download Windows Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: AI-SPM-Windows
+          path: windows-release
+
+      - name: Zip Windows Artifacts
+        run: |
+          cd windows-release
+          zip -r ../AI-SPM-Windows-x86_64.zip .
+          cd ..
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            macos-release/AI-SPM-macOS-arm64.zip
+            AI-SPM-Windows-x86_64.zip
+          generate_release_notes: true

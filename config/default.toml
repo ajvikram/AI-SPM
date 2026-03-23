@@ -1,0 +1,40 @@
+[server]
+host = "127.0.0.1"
+port = 8080
+log_level = "debug"
+mtls_enabled = false
+api_key = "secret-test-key"
+
+[identity]
+database_path = "data/identity.db"
+svid_ttl_seconds = 3600
+token_signing_key = "0000000000000000000000000000000000000000000000000000000000000000"
+default_token_ttl_seconds = 300
+
+[gateway]
+opa_url = "http://localhost:8181"
+policies_dir = "policies"
+nonce_cache_size = 10000
+rate_limit_per_second = 100
+
+[reasoning]
+max_hidden_variables = 1000
+default_external_integrity = "low"
+
+[audit]
+log_file_path = "data/audit.log"
+index_database_path = "data/audit_index.db"
+genesis_hash = "0000000000000000000000000000000000000000000000000000000000000000"
+
+[redteam]
+max_probe_turns = 10
+golden_dataset_dir = "data/golden_datasets"
+probe_timeout_seconds = 120
+
+[openai]
+base_url = "http://localhost:11434"
+api_key = ""
+model = "gpt-oss:20b"
+max_tokens = 1024
+temperature = 0
+timeout_seconds = 30
