@@ -10,6 +10,8 @@ Built on **NIST AI RMF**, **MITRE ATLAS**, **OWASP Agentic Top 10**, and **CSA M
 
 ---
 
+![AI-SPM Dashboard Interface](/Users/ajaysingh/.gemini/antigravity/brain/cba51ba9-4d93-4440-986a-32ea8622bb6d/dashboard_overview_1772508323704.png)
+
 ## ✨ Features
 
 | Layer | Capability |
@@ -21,6 +23,8 @@ Built on **NIST AI RMF**, **MITRE ATLAS**, **OWASP Agentic Top 10**, and **CSA M
 | **Red Team** | Multi-turn adversarial probing (Crescendo, GOAT, Persona Modification, Refusal Suppression, Topic Splitting), golden dataset regression benchmarking |
 | **Discovery & Monitor** | **Auto Discovery** of agents/MCPs/extensions, **Dependency Graph** with blast radius analysis, **Desktop Dashboard UI** |
 | **Server** | 20+ endpoint REST API (Axum) + CLI, protected by **2MB Payload limits** and **LRU Session Capacity Bounds** to mitigate Denial-of-Service attacks. |
+
+![Blast Radius Graph Demo](/Users/ajaysingh/.gemini/antigravity/brain/cba51ba9-4d93-4440-986a-32ea8622bb6d/depgraph_blast.png)
 
 ---
 
@@ -128,6 +132,8 @@ cargo run --bin ai-spm-monitor
 ```
 
 Once running, an `AI-SPM` shield icon will appear in your macOS menu bar. Click it and select **Open Dashboard**.
+
+![Desktop Agent Monitor Tray Menu](docs/assets/tray_menu.png)
 
 > [!TIP]
 > You can easily point the monitor to a remote AI-SPM server. Click **"✏️ Edit Config"** in the tray menu to quickly launch the configuration file natively, adjust your `server_url` and `api_key`, then hit **"🔄 Reload"** to instantly apply it without restarting!
