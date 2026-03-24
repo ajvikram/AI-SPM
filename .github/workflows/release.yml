@@ -56,7 +56,7 @@ jobs:
   publish-release:
     name: Publish GitHub Release
     needs: [build-mac, build-windows]
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -82,6 +82,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || format('draft-v0.1.{0}', github.run_number) }}
+          draft: ${{ github.event_name == 'workflow_dispatch' }}
           files: |
             macos-release/AI-SPM-macOS-arm64.zip
             AI-SPM-Windows-x86_64.zip
