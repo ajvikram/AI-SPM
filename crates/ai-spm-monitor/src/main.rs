@@ -67,10 +67,10 @@ fn main() {
     let server_mode_item = MenuItem::new(&mode_label, !config.lock().unwrap().is_admin_locked(), None);
     let server_url_item = {
         let cfg = config.lock().unwrap();
-        MenuItem::new(&format!("   URL: {}", cfg.effective_url()), false, None)
+        MenuItem::new(&format!("🔗 URL: {}", cfg.effective_url()), false, None)
     };
-    let edit_config_item = MenuItem::new("   ✏️ Edit Config", true, None);
-    let reload_config_item = MenuItem::new("   🔄 Reload", true, None);
+    let edit_config_item = MenuItem::new("✏️ Edit Config", true, None);
+    let reload_config_item = MenuItem::new("🔄 Reload Config", true, None);
 
     let report_item = MenuItem::new("📊 View Report", true, None);
     let dashboard_item = MenuItem::new("🌐 Open Dashboard", true, None);
