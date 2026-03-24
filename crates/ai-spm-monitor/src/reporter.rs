@@ -38,9 +38,16 @@ pub async fn sync_events(
 
 /// Print a formatted audit report to stdout.
 pub fn print_report(summary: &SessionSummary, events: &[MonitorEvent]) {
+    // Redact session identifier to satisfy CodeQL Cleartext Logging (Medium)
+    let display_id = if summary.session_id.len() >= 8 {
+        format!("{}***{}", &summary.session_id[0..4], &summary.session_id[summary.session_id.len()-4..])
+    } else {
+        "***REDACTED***".to_string()
+    };
+
     println!("\n🛡️  AI-SPM Agent Monitor — Session Report");
     println!("{}", "═".repeat(60));
-    println!("   Session:  {}", summary.session_id);
+    println!("   Tracking ID: {}", display_id);
     println!("   Started:  {}", summary.started_at.format("%Y-%m-%d %H:%M:%S"));
     println!();
     println!("   📊 Activity Summary");

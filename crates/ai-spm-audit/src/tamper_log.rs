@@ -240,6 +240,12 @@ impl AuditLog {
 
     fn write_to_log_file(&self, entry: &AuditEntry) -> Result<()> {
         let json = serde_json::to_string(entry)?;
+
+        // Remediation for CodeQL Path Traversal Risk (High)
+        if self.log_file_path.contains("..") {
+            return Err(AiSpmError::AuditLogError("Path traversal detected in log file path.".into()));
+        }
+
         let mut file = OpenOptions::new()
             .create(true)
             .append(true)
