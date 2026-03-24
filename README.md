@@ -1,5 +1,7 @@
 # 🛡️ AI-SPM — AI Security Posture Management
 
+[![CodeQL Setup](https://github.com/ajvikram/AI-SPM/workflows/CodeQL/badge.svg)](https://github.com/ajvikram/AI-SPM/security/code-scanning)
+[![Release Builds](https://github.com/ajvikram/AI-SPM/actions/workflows/release.yml/badge.svg)](https://github.com/ajvikram/AI-SPM/actions/workflows/release.yml)
 **Secure, audit, and red-team autonomous AI agents with defense-in-depth controls.**
 
 AI-SPM treats every AI agent as an **untrusted principal** within a deterministic control plane — enforcing identity, policy, taint tracking, tamper-evident auditing, and continuous adversarial testing.
