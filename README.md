@@ -12,7 +12,7 @@ Built on **NIST AI RMF**, **MITRE ATLAS**, **OWASP Agentic Top 10**, and **CSA M
 
 ---
 
-![AI-SPM Dashboard Interface](/Users/ajaysingh/.gemini/antigravity/brain/cba51ba9-4d93-4440-986a-32ea8622bb6d/dashboard_overview_1772508323704.png)
+![AI-SPM Dashboard Interface](docs/assets/dashboard_overview.png)
 
 ## ✨ Features
 
@@ -26,7 +26,7 @@ Built on **NIST AI RMF**, **MITRE ATLAS**, **OWASP Agentic Top 10**, and **CSA M
 | **Discovery & Monitor** | **Auto Discovery** of agents/MCPs/extensions, **Dependency Graph** with blast radius analysis, **Desktop Dashboard UI** |
 | **Server** | 20+ endpoint REST API (Axum) + CLI, protected by **2MB Payload limits** and **LRU Session Capacity Bounds** to mitigate Denial-of-Service attacks. |
 
-![Blast Radius Graph Demo](/Users/ajaysingh/.gemini/antigravity/brain/cba51ba9-4d93-4440-986a-32ea8622bb6d/depgraph_blast.png)
+![Blast Radius Graph Demo](docs/assets/depgraph_blast.png)
 
 ---
 
