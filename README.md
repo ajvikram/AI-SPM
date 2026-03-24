@@ -249,6 +249,8 @@ curl -X POST http://localhost:8080/api/gateway/mcp/validate \
 
 ### Security Controls & Policies
 
+![Shell Guard Intercept Visualization](docs/assets/shell_guard.png)
+
 ```bash
 # Evaluate Network Domain
 curl -X POST http://localhost:8080/api/network/evaluate \
