@@ -72,6 +72,16 @@ fn main() {
     let edit_config_item = MenuItem::new("✏️ Edit Config", true, None);
     let reload_config_item = MenuItem::new("🔄 Reload Config", true, None);
 
+    let session_title = MenuItem::new("LIVE SESSION", false, None);
+    let iter_cmds = MenuItem::new(">_ Commands: 0", false, None);
+    let iter_files = MenuItem::new("📄 Files Modified: 0", false, None);
+    let iter_net = MenuItem::new("🌐 Network Calls: 0", false, None);
+    
+    let threats_title = MenuItem::new("THREATS DETECTED", false, None);
+    let iter_blocked = MenuItem::new("🚫 Blocked: 0", false, None);
+    let iter_flagged = MenuItem::new("⚠️ Flagged: 0", false, None);
+    let iter_clean = MenuItem::new("✅ Clean: 0", false, None);
+
     let report_item = MenuItem::new("📊 View Report", true, None);
     let dashboard_item = MenuItem::new("🌐 Open Dashboard", true, None);
     let quit_item = MenuItem::new("❌ Quit", true, None);
@@ -84,6 +94,16 @@ fn main() {
     let _ = menu.append(&server_url_item);
     let _ = menu.append(&edit_config_item);
     let _ = menu.append(&reload_config_item);
+    let _ = menu.append(&PredefinedMenuItem::separator());
+    let _ = menu.append(&session_title);
+    let _ = menu.append(&iter_cmds);
+    let _ = menu.append(&iter_files);
+    let _ = menu.append(&iter_net);
+    let _ = menu.append(&PredefinedMenuItem::separator());
+    let _ = menu.append(&threats_title);
+    let _ = menu.append(&iter_blocked);
+    let _ = menu.append(&iter_flagged);
+    let _ = menu.append(&iter_clean);
     let _ = menu.append(&PredefinedMenuItem::separator());
     let _ = menu.append(&report_item);
     let _ = menu.append(&dashboard_item);
@@ -113,6 +133,7 @@ fn main() {
     // Event channel
     let (tx, rx) = mpsc::channel::<MonitorEvent>();
 
+    // ── Event collector thread ────────────────────────────
     // ── Event collector thread ────────────────────────────
     let events_clone = events.clone();
     let summary_clone = summary.clone();
@@ -207,10 +228,40 @@ fn main() {
     }
 
     // ── Event loop ────────────────────────────────────────
+    let mut last_cmds = u32::MAX;
+    let mut last_files = u32::MAX;
+    let mut last_net = u32::MAX;
+    let mut last_blocked = u32::MAX;
+    let mut last_flagged = u32::MAX;
+    let mut last_clean = u32::MAX;
+
     event_loop.run(move |tao_event, event_loop_window_target, control_flow| {
         *control_flow = ControlFlow::WaitUntil(
             std::time::Instant::now() + std::time::Duration::from_millis(100),
         );
+
+        if let tao::event::Event::MainEventsCleared = &tao_event {
+            // Safely poll the runtime stats entirely on the GUI thread to bypass Rc threading limits
+            let s = summary.lock().unwrap();
+            if s.total_commands != last_cmds || s.total_file_changes != last_files 
+                || s.total_network != last_net || s.blocked != last_blocked 
+                || s.flagged != last_flagged || s.allowed != last_clean 
+            {
+                iter_cmds.set_text(format!(">_ Commands: {}", s.total_commands));
+                iter_files.set_text(format!("📄 Files Modified: {}", s.total_file_changes));
+                iter_net.set_text(format!("🌐 Network Calls: {}", s.total_network));
+                iter_blocked.set_text(format!("🚫 Blocked: {}", s.blocked));
+                iter_flagged.set_text(format!("⚠️ Flagged: {}", s.flagged));
+                iter_clean.set_text(format!("✅ Clean: {}", s.allowed));
+
+                last_cmds = s.total_commands;
+                last_files = s.total_file_changes;
+                last_net = s.total_network;
+                last_blocked = s.blocked;
+                last_flagged = s.flagged;
+                last_clean = s.allowed;
+            }
+        }
 
         if let tao::event::Event::WindowEvent {
             event: tao::event::WindowEvent::CloseRequested,
